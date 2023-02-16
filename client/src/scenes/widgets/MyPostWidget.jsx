@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import {
   EditOutlined,
   DeleteOutlined,
@@ -18,10 +17,11 @@ import {
   IconButton,
   useMediaQuery,
 } from "@mui/material";
-import Dropzone from "react-dropzone";
 import FlexBetween from "components/FlexBetween";
+import Dropzone from "react-dropzone";
 import UserImage from "components/UserImage";
 import WidgetWrapper from "components/WidgetWrapper";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPosts } from "state";
 
@@ -33,13 +33,13 @@ const MyPostWidget = ({ picturePath }) => {
   const { palette } = useTheme();
   const { _id } = useSelector((state) => state.user);
   const token = useSelector((state) => state.token);
-  const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
+  const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
   const mediumMain = palette.neutral.mediumMain;
   const medium = palette.neutral.medium;
 
   const handlePost = async () => {
     const formData = new FormData();
-    formData.append("useId", _id);
+    formData.append("userId", _id);
     formData.append("description", post);
     if (image) {
       formData.append("picture", image);
@@ -62,8 +62,8 @@ const MyPostWidget = ({ picturePath }) => {
       <FlexBetween gap="1.5rem">
         <UserImage image={picturePath} />
         <InputBase
-          placeholder="What's on Your Mind..."
-          onChange={(e) => setPosts(e.target.value)}
+          placeholder="What's on your mind..."
+          onChange={(e) => setPost(e.target.value)}
           value={post}
           sx={{
             width: "100%",
@@ -75,8 +75,8 @@ const MyPostWidget = ({ picturePath }) => {
       </FlexBetween>
       {isImage && (
         <Box
-          borderRadius="5px"
           border={`1px solid ${medium}`}
+          borderRadius="5px"
           mt="1rem"
           p="1rem"
         >

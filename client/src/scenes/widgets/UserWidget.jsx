@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from "react";
 import {
   ManageAccountsOutlined,
   EditOutlined,
@@ -10,6 +9,7 @@ import UserImage from "components/UserImage";
 import FlexBetween from "components/FlexBetween";
 import WidgetWrapper from "components/WidgetWrapper";
 import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const UserWidget = ({ userId, picturePath }) => {
@@ -22,7 +22,7 @@ const UserWidget = ({ userId, picturePath }) => {
   const main = palette.neutral.main;
 
   const getUser = async () => {
-    const response = await fetch(`http://localhost:3001/users/&{userId}`, {
+    const response = await fetch(`http://localhost:3001/users/${userId}`, {
       method: "GET",
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -32,7 +32,7 @@ const UserWidget = ({ userId, picturePath }) => {
 
   useEffect(() => {
     getUser();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!user) {
     return null;
@@ -50,7 +50,7 @@ const UserWidget = ({ userId, picturePath }) => {
 
   return (
     <WidgetWrapper>
-      {/* First row */}
+      {/* FIRST ROW */}
       <FlexBetween
         gap="0.5rem"
         pb="1.1rem"
@@ -64,7 +64,10 @@ const UserWidget = ({ userId, picturePath }) => {
               color={dark}
               fontWeight="500"
               sx={{
-                "&:hover": { color: palette.primary.light, cursor: "pointer" },
+                "&:hover": {
+                  color: palette.primary.light,
+                  cursor: "pointer",
+                },
               }}
             >
               {firstName} {lastName}
@@ -77,21 +80,21 @@ const UserWidget = ({ userId, picturePath }) => {
 
       <Divider />
 
-      {/* Second row */}
+      {/* SECOND ROW */}
       <Box p="1rem 0">
         <Box display="flex" alignItems="center" gap="1rem" mb="0.5rem">
           <LocationOnOutlined fontSize="large" sx={{ color: main }} />
-          <Typography color="medium">{location}</Typography>
+          <Typography color={medium}>{location}</Typography>
         </Box>
         <Box display="flex" alignItems="center" gap="1rem">
           <WorkOutlineOutlined fontSize="large" sx={{ color: main }} />
-          <Typography color="medium">{occupation}</Typography>
+          <Typography color={medium}>{occupation}</Typography>
         </Box>
       </Box>
 
       <Divider />
 
-      {/* Third row*/}
+      {/* THIRD ROW */}
       <Box p="1rem 0">
         <FlexBetween mb="0.5rem">
           <Typography color={medium}>Who's viewed your profile</Typography>
@@ -109,7 +112,7 @@ const UserWidget = ({ userId, picturePath }) => {
 
       <Divider />
 
-      {/* Fourth row */}
+      {/* FOURTH ROW */}
       <Box p="1rem 0">
         <Typography fontSize="1rem" color={main} fontWeight="500" mb="1rem">
           Social Profiles
