@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Box,
   Button,
@@ -6,7 +7,6 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import React, { useState } from "react";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import { Formik } from "formik";
 import * as yup from "yup";
@@ -55,9 +55,47 @@ const Form = () => {
   const isLogin = pageType === "login";
   const isRegister = pageType === "register";
 
-  const register = async (values, onSubmitProps) => {};
+  const register = async (values, onSubmitProps) => {
+    // this allows us to send form info with image
+    const formData = new FormData();
+    for (let value in values) {
+      formData.append(value, values[value]);
+    }
+    formData.append("picturePath", values.picture.name);
 
-  const login = async (values, onSubmitProps) => {};
+    const savedUserResponse = await fetch(
+      "http://localhost:3001/auth/register",
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+    const savedUser = await savedUserResponse.json();
+    onSubmitProps.resetForm();
+
+    if (savedUser) {
+      setPageType("login");
+    }
+  };
+
+  const login = async (values, onSubmitProps) => {
+    const loggedInResponse = await fetch("http://localhost:3001/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(values),
+    });
+    const loggedIn = await loggedInResponse.json();
+    onSubmitProps.resetForm();
+    if (loggedIn) {
+      dispatch(
+        setLogin({
+          user: loggedIn.user,
+          token: loggedIn.token,
+        })
+      );
+      navigate("/home");
+    }
+  };
 
   const handleFormSubmit = async (values, onSubmitProps) => {
     if (isLogin) await login(values, onSubmitProps);
@@ -82,15 +120,13 @@ const Form = () => {
       }) => (
         <form onSubmit={handleSubmit}>
           <Box
-            display="gird"
+            display="grid"
             gap="30px"
             gridTemplateColumns="repeat(4, minmax(0, 1fr))"
             sx={{
               "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
             }}
           >
-            {/* Register section */}
-
             {isRegister && (
               <>
                 <TextField
@@ -144,10 +180,10 @@ const Form = () => {
                   p="1rem"
                 >
                   <Dropzone
-                    acceptedFiles=".jpg,.png,.jpeg"
+                    acceptedFiles=".jpg,.jpeg,.png"
                     multiple={false}
                     onDrop={(acceptedFiles) =>
-                      setFieldValue("picture", acceptedFiles)
+                      setFieldValue("picture", acceptedFiles[0])
                     }
                   >
                     {({ getRootProps, getInputProps }) => (
@@ -196,7 +232,7 @@ const Form = () => {
             />
           </Box>
 
-          {/* buttons */}
+          {/* BUTTONS */}
           <Box>
             <Button
               fullWidth
@@ -219,12 +255,15 @@ const Form = () => {
               sx={{
                 textDecoration: "underline",
                 color: palette.primary.main,
-                "&:hover": { cursor: "pointer", color: palette.primary.light },
+                "&:hover": {
+                  cursor: "pointer",
+                  color: palette.primary.light,
+                },
               }}
             >
               {isLogin
                 ? "Don't have an account? Sign Up here."
-                : "Already have an account? Login"}
+                : "Already have an account? Login here."}
             </Typography>
           </Box>
         </form>
